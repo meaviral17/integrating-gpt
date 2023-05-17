@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Chatbot Integration</title>
+</head>
+<body>
+  <div id="chat-window">
+    <div id="chat-messages"></div>
+    <input type="text" id="user-input" placeholder="Type your message here..." />
+    <button onclick="sendMessage()">Send</button>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    // Global variables
+    var chatMessages = document.getElementById("chat-messages");
+    var userInput = document.getElementById("user-input");
+
+    // Function to send user message and receive response
+    function sendMessage() {
+      var userMessage = userInput.value;
+      appendMessage("User: " + userMessage);
+
+      // Send user message to the server
+      // Replace 'YOUR_API_KEY' with your actual API key/token
+      $.ajax({
+        url: "https://api.openai.com/v1/engines/davinci-codex/completions",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer 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"
+        },
+        method: "POST",
+        data: JSON.stringify({
+          "prompt": "User: " + userMessage + "\nAI:",
+          "max_tokens": 50
+        }),
+        success: function(response) {
+          var aiMessage = response.choices[0].text.trim();
+          appendMessage("AI: " + aiMessage);
+        },
+        error: function(error) {
+          console.log("Error:", error);
+        }
+      });
+
+      userInput.value = ""; // Clear user input field
+    }
+
+    // Function to append messages to the chat window
+    function appendMessage(message) {
+      var messageElement = document.createElement("div");
+      messageElement.innerText = message;
+      chatMessages.appendChild(messageElement);
+    }
+  </script>
+</body>
+</html>
